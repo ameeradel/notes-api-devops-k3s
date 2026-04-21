@@ -14,10 +14,12 @@ spec:
       labels:
         app: notes-app
     spec:
+      imagePullSecrets:
+        - name: ecr-secret
       containers:
         - name: notes-api-app
-          image: notes-api-app:latest
-          imagePullPolicy: Never
+          image: 916205284554.dkr.ecr.us-east-1.amazonaws.com/notes-api-app:placeholder
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
           envFrom:

@@ -8,3 +8,4 @@ npm-debug.log
 crash.log
 *.tfvars
 *.pem
+k3s.yaml
