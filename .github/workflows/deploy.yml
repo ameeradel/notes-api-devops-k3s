@@ -55,6 +55,9 @@ jobs:
     needs: build_and_push
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Install kubectl
         run: |
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -70,6 +73,10 @@ jobs:
       - name: Test cluster access
         run: |
           kubectl get nodes
+
+      - name: Apply app manifest
+        run: |
+          kubectl apply -f k8s/app-deployment.yaml -n $NAMESPACE
 
       - name: Update deployment image
         run: |
