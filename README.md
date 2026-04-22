@@ -30,26 +30,12 @@ It includes:
 
 ---
 
-# 🏗️ Architecture
+## 🏗️ Architecture (K3s-based Deployment)
 
-```text
-User
- ↓
-EC2 Public IP (80 / 443)
- ↓
-k3s ServiceLB (internal load balancer)
- ↓
-NGINX Ingress Controller Service (NodePort)
- ↓
-Ingress Rules
- ↓
-app-service (ClusterIP)
- ↓
-Notes API Pods
- ↓
-db-service (ClusterIP)
- ↓
-PostgreSQL Pod + Persistent Volume
+![Architecture](docs/images/app-architecture.png)
+
+> High-level architecture showing how external traffic enters the cluster, is routed via the NGINX ingress controller, and reaches application pods and database services, with monitoring integrated.
+
 ````
 
 ## Architecture Notes
@@ -194,27 +180,11 @@ It relies on **K3s internal load balancing (ServiceLB)**.
 
 ---
 
-# 🔄 CI/CD Pipeline
+## 🔄 CI/CD Pipeline & Authentication Flow
 
-GitHub Actions automates build and deployment.
+![CI/CD Pipeline](docs/images/app-cicd.png)
 
-## Flow
-
-```text
-GitHub Actions
-  ↓
-[OIDC Authentication → AWS IAM Role]
-  ↓
-Build Docker Image
-  ↓
-Push Image to AWS ECR
-  ↓
-[kubeconfig Authentication → Kubernetes Cluster]
-  ↓
-kubectl set image
-  ↓
-Rolling Update Deployment
-```
+> Automated pipeline that builds, pushes, and deploys the application using secure authentication (OIDC) and Kubernetes deployment strategies.
 
 ## Responsibilities
 
