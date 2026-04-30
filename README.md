@@ -1,4 +1,3 @@
-````markdown
 # 🚀 Notes API DevOps Project
 
 A production-focused DevOps project that demonstrates how to build, containerize, provision, deploy, expose, and monitor a Node.js Notes API using modern DevOps practices.
@@ -30,9 +29,7 @@ It includes:
 
 ---
 
-````
-
-## 🏗️ Architecture (K3s-based Deployment)
+# 🏗️ Architecture (K3s-based Deployment)
 
 ![Architecture](docs/images/App-architecture.png)
 
@@ -40,12 +37,12 @@ It includes:
 
 ## Architecture Notes
 
-* Infrastructure is provisioned using **Terraform**
-* Kubernetes cluster runs on **K3s**
-* No cloud-managed load balancer is used
-* Traffic enters through **ports 80 and 443**
-* K3s ServiceLB forwards traffic to the **Ingress NodePort service**
-* Internal communication uses **ClusterIP**
+- Infrastructure is provisioned using **Terraform**
+- Kubernetes cluster runs on **K3s**
+- No cloud-managed load balancer is used
+- Traffic enters through **ports 80 and 443**
+- K3s ServiceLB forwards traffic to the **Ingress NodePort service**
+- Internal communication uses **ClusterIP**
 
 ---
 
@@ -53,35 +50,35 @@ It includes:
 
 ## Application
 
-* Node.js
-* Express.js
-* PostgreSQL
+- Node.js
+- Express.js
+- PostgreSQL
 
 ## Infrastructure
 
-* AWS
-* Terraform
+- AWS
+- Terraform
 
 ## Containers
 
-* Docker
-* Docker Compose
+- Docker
+- Docker Compose
 
 ## Orchestration
 
-* Kubernetes
-* K3s
-* NGINX Ingress Controller
+- Kubernetes
+- K3s
+- NGINX Ingress Controller
 
 ## CI/CD
 
-* GitHub Actions
-* AWS ECR
+- GitHub Actions
+- AWS ECR
 
 ## Monitoring
 
-* Prometheus
-* Grafana
+- Prometheus
+- Grafana
 
 ---
 
@@ -89,24 +86,24 @@ It includes:
 
 ## Application Features
 
-* CRUD Notes API
-* Environment-based configuration
-* Structured logging
-* Graceful shutdown
+- CRUD Notes API
+- Environment-based configuration
+- Structured logging
+- Graceful shutdown
 
 ## Operational Endpoints
 
-* `/health` → liveness check
-* `/ready` → readiness (DB connectivity)
-* `/metrics` → Prometheus metrics
+- `/health` → liveness check
+- `/ready` → readiness (DB connectivity)
+- `/metrics` → Prometheus metrics
 
 ## DevOps Features
 
-* Dockerized application
-* Kubernetes manifests
-* Ingress-based routing
-* CI/CD automation
-* Monitoring stack
+- Dockerized application
+- Kubernetes manifests
+- Ingress-based routing
+- CI/CD automation
+- Monitoring stack
 
 ---
 
@@ -138,10 +135,10 @@ docker compose -f docker-compose.local.yml up --build
 
 ## Access
 
-* App: [http://localhost:3000](http://localhost:3000)
-* Health: [http://localhost:3000/health](http://localhost:3000/health)
-* Ready: [http://localhost:3000/ready](http://localhost:3000/ready)
-* Metrics: [http://localhost:3000/metrics](http://localhost:3000/metrics)
+- App: http://localhost:3000
+- Health: http://localhost:3000/health
+- Ready: http://localhost:3000/ready
+- Metrics: http://localhost:3000/metrics
 
 ---
 
@@ -175,12 +172,12 @@ This project uses **NGINX Ingress Controller** as the entry point for external t
 
 ## Key Point
 
-This setup does NOT use a cloud load balancer.
+This setup does **not** use a cloud load balancer.  
 It relies on **K3s internal load balancing (ServiceLB)**.
 
 ---
 
-## 🔄 CI/CD Pipeline & Authentication Flow
+# 🔄 CI/CD Pipeline & Authentication Flow
 
 ![CI/CD Pipeline](docs/images/app-cicd.png)
 
@@ -188,12 +185,12 @@ It relies on **K3s internal load balancing (ServiceLB)**.
 
 ## Responsibilities
 
-* Build Docker image
-* Authenticate securely to AWS using OIDC
-* Push image to ECR
-* Authenticate to Kubernetes using kubeconfig
-* Update deployment
-* Trigger rolling update
+- Build Docker image
+- Authenticate securely to AWS using OIDC
+- Push image to ECR
+- Authenticate to Kubernetes using kubeconfig
+- Update deployment
+- Trigger rolling update
 
 ---
 
@@ -203,51 +200,95 @@ This project uses a multi-layer secure authentication approach.
 
 ## 1. GitHub → AWS (OIDC)
 
-* Uses OpenID Connect (OIDC)
-* No static AWS credentials stored
-* GitHub assumes IAM role
-* Temporary credentials are issued
+- Uses OpenID Connect (OIDC)
+- No static AWS credentials stored
+- GitHub assumes IAM role
+- Temporary credentials are issued
 
 ## 2. CI/CD → Kubernetes (kubeconfig)
 
 Used for:
 
-* `kubectl apply`
-* `kubectl set image`
-* `kubectl rollout status`
+- `kubectl apply`
+- `kubectl set image`
+- `kubectl rollout status`
 
 Defines:
 
-* Cluster endpoint
-* Credentials
-* Context
+- Cluster endpoint
+- Credentials
+- Context
 
 ## 3. Kubernetes → ECR (Image Pull)
 
-* Cluster pulls images from private ECR
-* Access is restricted and controlled
+- Cluster pulls images from private ECR
+- Access is restricted and controlled
 
 ---
 
 ## 🔐 Security Summary
 
-* No long-lived credentials
-* Temporary AWS access via OIDC
-* Controlled cluster access
-* Private container registry
+- No long-lived credentials
+- Temporary AWS access via OIDC
+- Controlled cluster access
+- Private container registry
 
 ---
 
 # 📊 Monitoring & Observability
 
-* Prometheus scrapes `/metrics`
-* Grafana visualizes metrics
+This project includes a production-style monitoring stack using **Prometheus** and **Grafana**.
 
-## Metrics
+## Monitoring Flow
 
-* HTTP request count
-* Request duration
-* System/runtime metrics
+```text
+Node.js Application exposes /metrics
+        ↓
+Prometheus scrapes metrics
+        ↓
+Grafana visualizes dashboards
+```
+
+## Dashboard Panels
+
+- Requests Last 5 Minutes
+- Request Rate (req/sec)
+- Average Latency
+- 5xx Error Rate
+- Requests by HTTP Status
+- Top Routes by Traffic
+
+## Dashboard Preview
+
+![Grafana Dashboard](docs/images/grafana-dashboard1.png)
+
+## Custom Metrics
+
+### Counter
+
+`http_requests_total`
+
+Tracks total HTTP requests with labels:
+
+- method
+- route
+- status
+
+### Histogram
+
+`http_request_duration_seconds`
+
+Tracks request duration for latency analysis.
+
+## Why Monitoring Matters
+
+This dashboard helps quickly identify:
+
+- Traffic spikes or drops
+- Slow responses
+- Server-side failures
+- Abnormal route traffic
+- API health trends
 
 ---
 
@@ -257,33 +298,36 @@ Infrastructure is provisioned using **Terraform**.
 
 This ensures:
 
-* Repeatability
-* Consistency
-* Automation of AWS resources
+- Repeatability
+- Consistency
+- Automation of AWS resources
 
 ---
 
 # 🧠 DevOps Practices Demonstrated
 
-* Infrastructure as Code (Terraform)
-* Containerization
-* Kubernetes orchestration
-* Ingress routing
-* CI/CD automation
-* Secure authentication (OIDC + kubeconfig)
-* Observability
-* Production-ready design
+- Infrastructure as Code (Terraform)
+- Containerization
+- Kubernetes orchestration
+- Ingress routing
+- CI/CD automation
+- Secure authentication (OIDC + kubeconfig)
+- Observability
+- Production-ready design
 
 ---
 
 # 🚧 Future Improvements
 
-* Migrate to EKS
-* Add Helm
-* Implement Argo CD (GitOps)
-* Use AWS Secrets Manager
-* Add Horizontal Pod Autoscaler (HPA)
-* Move database to RDS
+- Migrate to EKS
+- Add Helm
+- Implement Argo CD (GitOps)
+- Use AWS Secrets Manager
+- Add Horizontal Pod Autoscaler (HPA)
+- Move database to RDS
+- Add alerts in Grafana
+- Add Loki log aggregation
+- Add CPU / Memory infrastructure dashboards
 
 ---
 
@@ -301,12 +345,12 @@ This is not just a CRUD deployment.
 
 It demonstrates a full DevOps lifecycle:
 
-* Provision infrastructure
-* Build and push images
-* Deploy to Kubernetes
-* Expose services correctly
-* Secure the pipeline
-* Monitor the system
+- Provision infrastructure
+- Build and push images
+- Deploy to Kubernetes
+- Expose services correctly
+- Secure the pipeline
+- Monitor the system
 
 ---
 
@@ -314,9 +358,8 @@ It demonstrates a full DevOps lifecycle:
 
 This project focuses on:
 
-* Deep understanding
-* Real-world practices
-* Production mindset
+- Deep understanding
+- Real-world practices
+- Production mindset
 
 It reflects how modern DevOps systems are designed, built, and operated.
-

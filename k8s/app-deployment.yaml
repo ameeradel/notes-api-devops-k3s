@@ -52,6 +52,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: app-service
+  labels:
+    app: notes-app
 spec:
   type: ClusterIP
   selector:

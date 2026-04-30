@@ -12,10 +12,23 @@ const app = express();
 
 app.use(express.json());
 
+// Metrics middleware
 app.use((req, res, next) => {
+  const ignoredRoutes = ["/metrics", "/health", "/ready"];
+
+  if (ignoredRoutes.includes(req.path)) {
+    return next();
+  }
+
   const endTimer = httpRequestDurationSeconds.startTimer();
 
   res.on("finish", () => {
+    // Count only real API traffic
+    if (!req.path.startsWith("/api")) return;
+
+    // Ignore bot scans / unknown routes
+    if (res.statusCode === 404) return;
+
     const route = req.route?.path || req.path;
 
     httpRequestsTotal.inc({
@@ -34,11 +47,13 @@ app.use((req, res, next) => {
   next();
 });
 
+// Logger middleware
 app.use((req, res, next) => {
   logger.info("Incoming request", {
     method: req.method,
     path: req.path
   });
+
   next();
 });
 

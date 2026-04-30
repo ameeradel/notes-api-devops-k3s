@@ -1,15 +1,13 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: notes-api-monitor
-  namespace: monitoring
+  name: notes-app-servicemonitor
+  labels:
+    release: monitoring
 spec:
   selector:
     matchLabels:
       app: notes-app
-  namespaceSelector:
-    matchNames:
-      - default
   endpoints:
     - port: http
       path: /metrics
